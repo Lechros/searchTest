@@ -100,7 +100,7 @@ public class Main {
             }
             long searchEnd = System.nanoTime();
             System.out.println("Search done (" + timeToString((searchEnd - searchStart) / iter) + ")");
-            result.queryTimes.add(searchEnd - searchStart);
+            result.queryTimes.add((searchEnd - searchStart) / iter);
         }
 
         results.add(result);
