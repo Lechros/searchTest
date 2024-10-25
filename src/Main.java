@@ -79,7 +79,9 @@ public class Main {
             Constructor<? extends Search> constructor = searcher.getConstructor(Map.class);
             Search instance = constructor.newInstance(data);
             String keyword = generator.generateKeyword(keywordLength);
-            instance.search(keyword);
+            for (int i = 0; i < iter / 5; i++) {
+                instance.search(keyword);
+            }
         }
 
         for (Class<? extends Search> searcher : searchers) {
