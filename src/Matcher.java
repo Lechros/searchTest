@@ -10,6 +10,12 @@ public class Matcher {
     }
 
     private boolean charMatches(char nameCh, char keywordCh) {
-        return Character.toLowerCase(nameCh) == Character.toLowerCase(keywordCh);
+        if ('A' <= nameCh && nameCh <= 'Z') {
+            nameCh -= 'A' + 'a';
+        }
+        if ('A' <= keywordCh && keywordCh <= 'Z') {
+            keywordCh -= 'A' + 'a';
+        }
+        return nameCh == keywordCh;
     }
 }
