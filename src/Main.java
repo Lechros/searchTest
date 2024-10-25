@@ -74,6 +74,14 @@ public class Main {
         long dataEnd = System.nanoTime();
         System.out.println("Setup data done (" + timeToString((dataEnd - dataStart)) + ")");
 
+        // Warmup
+        for (Class<? extends Search> searcher : searchers) {
+            Constructor<? extends Search> constructor = searcher.getConstructor(Map.class);
+            Search instance = constructor.newInstance(data);
+            String keyword = generator.generateKeyword(keywordLength);
+            instance.search(keyword);
+        }
+
         for (Class<? extends Search> searcher : searchers) {
             System.out.println("-----");
             Constructor<? extends Search> constructor = searcher.getConstructor(Map.class);
