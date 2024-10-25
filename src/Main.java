@@ -13,15 +13,24 @@ public class Main {
             /*     nameLength        cardinality
               size(rows)  |  keywordLength   |    iter
                    |      |      |           |      |  */
-            {    100,    10,     3, '힣' - '가', 10000},
-            {  10000,    20,     3, '힣' - '가',  1000},
-            {  10000,    20,    10, '힣' - '가',  1000},
+            {    100,     5,     2,        100, 10000},
+            {    100,     5,     2,      10000, 10000},
+            {    100,    20,     3,        100, 10000},
+            {    100,    20,     3,      10000, 10000},
+            {    100,   100,     5,        100, 10000},
+            {    100,   100,     5,      10000, 10000},
+            {  10000,     5,     2,        100,  1000},
+            {  10000,     5,     2,      10000,  1000},
             {  10000,    20,     3,        100,  1000},
-            { 100000,   100,     5, '힣' - '가',    10},
-            { 100000,   100,    50, '힣' - '가',    10},
-            { 100000,   100,     5,        100,    10},
-            { 100000,   100,    50,        100,    10},
-            {1000000,    20,     3,        500,    10},
+            {  10000,    20,     3,      10000,  1000},
+            {  10000,   100,     5,        100,  1000},
+            {  10000,   100,     5,      10000,  1000},
+            {1000000,     5,     2,        100,    10},
+            {1000000,     5,     2,      10000,    10},
+            {1000000,    20,     3,        100,    10},
+            {1000000,    20,     3,      10000,    10},
+            {1000000,   100,     5,        100,    10},
+            {1000000,   100,     5,      10000,    10},
             // @formatter:on
     };
     List<TestCaseResult> results = new ArrayList<>();
@@ -43,6 +52,9 @@ public class Main {
         System.out.println("| Searcher | Row count | Name length | Keyword length | Cardinality | Setup time | Query time |");
         System.out.println("|:---|---:|---:|---:|---:|---:|---:|");
         for (TestCaseResult result : results) {
+            long minSetupTime = result.setupTimes.stream().min(Long::compareTo).get();
+            long minQueryTime = result.queryTimes.stream().min(Long::compareTo).get();
+            long minTime = Math.min(minSetupTime, minQueryTime);
             for (int i = 0; i < searchers.size(); i++) {
                 long setupTime = result.setupTimes.get(i);
                 long queryTime = result.queryTimes.get(i);
@@ -52,8 +64,8 @@ public class Main {
                         result.nameLength,
                         result.keywordLength,
                         result.cardinality,
-                        timeToString(setupTime),
-                        timeToString(queryTime));
+                        timeToString(setupTime) + String.format(" (%.1f)", setupTime / (double) minTime),
+                        timeToString(queryTime) + String.format(" (%.1f)", queryTime / (double) minTime));
             }
             System.out.println("|-|-|-|-|-|-|-|");
         }
@@ -109,8 +121,10 @@ public class Main {
     }
 
     private String timeToString(long nanoTime) {
-        if (nanoTime < 1000 * 1000) {
-            return String.format("%.4f ms", nanoTime / 1000000.0);
+        if (nanoTime < 1000 * 10) {
+            return String.format("%.2f μs", nanoTime / 1000.0);
+        } else if (nanoTime < 1000 * 1000) {
+            return String.format("%d μs", nanoTime / 1000);
         } else if (nanoTime < 1000 * 1000 * 10) {
             return String.format("%.1f ms", nanoTime / 1000000.0);
         } else {
