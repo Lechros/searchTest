@@ -38,6 +38,7 @@ public class ReverseIndexSearch implements Search {
         if (set == null) {
             return Collections.emptySet();
         }
+        set = new HashSet<>(set);
         for (int i = 1; i < keyword.length(); i++) {
             Set<Long> next = index.get(keyword.charAt(i));
             if (next == null) {
